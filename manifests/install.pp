@@ -3,7 +3,7 @@ define rbenv::install(
   $group = $user,
   $home  = '',
   $root  = '',
-  $rc    = '.profile'
+  $rc    = ''
 ) {
 
   # Workaround http://projects.puppetlabs.com/issues/9848
@@ -11,6 +11,11 @@ define rbenv::install(
   $root_path = $root ? { '' => "${home_path}/.rbenv", default => $root }
 
   $rbenvrc = "${home_path}/.rbenvrc"
+
+  case $osfamily {
+    'Redhat': { $tc = '.bash_profile' }
+    default:  { $rc = '.profile' }
+  }
   $shrc  = "${home_path}/${rc}"
 
   if ! defined( Class['rbenv::dependencies'] ) {
